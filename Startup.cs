@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using inz_int.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,13 +22,17 @@ namespace inz_int
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
-
+        public string _userApiDbPasswd = null;
         public void ConfigureServices(IServiceCollection services)
         {
+            _userApiDbPasswd = Configuration["UserAPI:Passwd"];
+            var userConnectionString = String.Concat(Configuration["ConnectionStrings:UserConnection"], "Password=", _userApiDbPasswd, ";");
 
+            services.AddDbContext<UserContext>(opt => opt.UseSqlServer(userConnectionString));
             services.AddControllers();
+            services.AddScoped<IUserRepository, MockUserRepository>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "inz_int", Version = "v1" });

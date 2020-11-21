@@ -9,7 +9,12 @@ namespace inz_int.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly MockUserRepository _repository = new MockUserRepository();
+        private readonly IUserRepository _repository;
+
+        public UsersController(IUserRepository repository)
+        {
+            _repository = repository;
+        }
 
         [HttpGet]
         public ActionResult<IEnumerable<User>> GetAllUsers()

@@ -10,7 +10,7 @@ namespace inz_int.Data
             var commands = new List<User>
             {
                 new User(0, "Sean", "Bean", "dies_in_every_film", "strongPasswd"),
-                new User(1, "Leaonardo", "DiCaprio", "oscar_at_least", "9filmsofQT"),
+                new User(1, "Leaonardo", "DiCaprio", "finallyGotOscar", "9filmsofQT"),
                 new User(2, "Django", "Freeman", "fastestGun", "brunhilda123")
             };
             return commands;
