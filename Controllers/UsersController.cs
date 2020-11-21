@@ -27,13 +27,24 @@ namespace inz_int.Controllers
             return Ok(_mapper.Map<IEnumerable<UserReadDTO>>(users));
         }
 
-        [HttpGet("{id}")] 
+        [HttpGet("{id}", Name="GetUserById")] 
         public ActionResult<UserReadDTO> GetUserById(int id)
         {
             var user = _repository.GetUserById(id);
             if(user == null)
                 return NotFound(user);
             return Ok(_mapper.Map<UserReadDTO>(user));
+        }
+
+        [HttpPost]
+        public ActionResult<UserReadDTO> CreateUser(UserCreateDTO userCreateDTO)
+        {
+            var userModel = _mapper.Map<User>(userCreateDTO);
+            _repository.CreateUser(userModel);
+            _repository.SaveChanges();
+
+            var userReadDTO = _mapper.Map<UserReadDTO>(userModel);
+            return CreatedAtRoute(nameof(GetUserById), new {Id = userModel.Id}, userReadDTO);
         }
     }
 }

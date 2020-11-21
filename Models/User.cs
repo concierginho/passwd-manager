@@ -4,15 +4,6 @@ namespace inz_int.Models
 {
     public class User
     {
-        public User(int id, string firstName, string lastName, string login, string passwd) 
-        {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            Login = login;
-            Passwd = passwd;
-        }
-
         [Key]
         public int Id { get; set; }
         [Required]

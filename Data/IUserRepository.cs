@@ -7,5 +7,7 @@ namespace inz_int.Data
     {
         IEnumerable<User> GetAllUsers();
         User GetUserById(int id);
+        void CreateUser(User user);
+        bool SaveChanges();
     }
 }

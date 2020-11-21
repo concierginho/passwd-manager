@@ -9,6 +9,7 @@ namespace inz_int.Profiles
         public UsersProfile()
         {
             CreateMap<User, UserReadDTO>();
+            CreateMap<UserCreateDTO, User>();
         }
     }
 }

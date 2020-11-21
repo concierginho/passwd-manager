@@ -12,6 +12,15 @@ namespace inz_int.Data
         {
             _context = context;
         }
+
+        public void CreateUser(User user)
+        {
+            if(user == null)
+                throw new System.ArgumentNullException(nameof(user));
+
+            _context.Add(user);
+        }
+
         public IEnumerable<User> GetAllUsers()
         {
             return _context.Users.ToList();
@@ -20,6 +29,11 @@ namespace inz_int.Data
         public User GetUserById(int id)
         {
             return _context.Users.FirstOrDefault(p => p.Id == id);
+        }
+
+        public bool SaveChanges()
+        {
+            return _context.SaveChanges() >= 0;
         }
     }
 }
