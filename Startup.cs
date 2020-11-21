@@ -31,7 +31,8 @@ namespace inz_int
 
             services.AddDbContext<UserContext>(opt => opt.UseSqlServer(userConnectionString));
             services.AddControllers();
-            services.AddScoped<IUserRepository, MockUserRepository>();
+            //services.AddScoped<IUserRepository, MockUserRepository>();
+            services.AddScoped<IUserRepository, SqlUserRepository>();
 
             services.AddSwaggerGen(c =>
             {
