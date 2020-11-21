@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using inz_int.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,8 +31,11 @@ namespace inz_int
             var userConnectionString = String.Concat(Configuration["ConnectionStrings:UserConnection"], "Password=", _userApiDbPasswd, ";");
 
             services.AddDbContext<UserContext>(opt => opt.UseSqlServer(userConnectionString));
+            
             services.AddControllers();
-            //services.AddScoped<IUserRepository, MockUserRepository>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddScoped<IUserRepository, SqlUserRepository>();
 
             services.AddSwaggerGen(c =>
