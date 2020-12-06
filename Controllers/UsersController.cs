@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using AutoMapper;
 using inz_int.Data;
 using inz_int.DTOs;
 using inz_int.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace inz_int.Controllers
@@ -19,8 +22,9 @@ namespace inz_int.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-        
+
         [HttpGet]
+        [Authorize]
         public ActionResult<IEnumerable<UserReadDTO>> GetAllUsers()
         {
             var users = _repository.GetAllUsers();
@@ -39,12 +43,23 @@ namespace inz_int.Controllers
         [HttpPost]
         public ActionResult<UserReadDTO> CreateUser(UserCreateDTO userCreateDTO)
         {
+            var duplicates = _repository.GetAllUsers().Where(suspect => suspect.Login == userCreateDTO.Login).ToList();
+            if(duplicates.Count > 0)
+                return Conflict("User with given login already exists.");
+
             var userModel = _mapper.Map<User>(userCreateDTO);
             _repository.CreateUser(userModel);
             _repository.SaveChanges();
 
             var userReadDTO = _mapper.Map<UserReadDTO>(userModel);
             return CreatedAtRoute(nameof(GetUserById), new {Id = userModel.Id}, userReadDTO);
+        }
+
+        [HttpPost("authentication")]
+        public IActionResult Authenticate(UserLoginReadDTO userLogin)
+        {
+
+            return Ok();
         }
     }
 }

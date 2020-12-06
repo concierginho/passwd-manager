@@ -7,7 +7,6 @@ namespace inz_int.Data
     {
         public UserContext(DbContextOptions<UserContext> opt) : base(opt)
         {
-            
         }
 
         public DbSet<User> Users { get; set; }
