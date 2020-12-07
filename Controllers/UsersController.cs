@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using AutoMapper;
+using inz_int.Authentication;
 using inz_int.Data;
 using inz_int.DTOs;
 using inz_int.Models;
@@ -14,11 +15,13 @@ namespace inz_int.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
 
-        public UsersController(IUserRepository repository, IMapper mapper)
+        public UsersController(IUserRepository repository, IMapper mapper, IJwtAuthenticationManager jwtAuthenticationManager)
         {
+            _jwtAuthenticationManager = jwtAuthenticationManager;
             _repository = repository;
             _mapper = mapper;
         }
@@ -55,11 +58,13 @@ namespace inz_int.Controllers
             return CreatedAtRoute(nameof(GetUserById), new {Id = userModel.Id}, userReadDTO);
         }
 
-        [HttpPost("authentication")]
+        [HttpPost("login")]
         public IActionResult Authenticate(UserLoginReadDTO userLogin)
         {
-
-            return Ok();
+            var token = _jwtAuthenticationManager.Authenticate(userLogin.Login, userLogin.Passwd);
+            if(token == null)
+                return Unauthorized();
+            return Ok(new UserLoginAnswerDTO{ Token = token });
         }
     }
 }

@@ -1,12 +1,16 @@
 using System;
 using AutoMapper;
+using inz_int.Authentication;
+using inz_int.Authorization;
 using inz_int.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace inz_int
@@ -38,7 +42,22 @@ namespace inz_int
 
             services.AddScoped<IUserRepository, SqlUserRepository>();
             services.AddScoped<IPasswdRepository, SqlPasswdRepository>();
+            services.AddScoped<IJwtAuthenticationManager, JwtAuthenticationManager>();
+            services.AddScoped<ValidUsersContext, ValidUsersContext>();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => 
+                {
+                    var symmetricKey = new SymmetricSecurityKey(OpenApiEncoding.UTF8.GetBytes(configuration["Jwt:Symmetric:Key"]));
+                    
+                    options.IncludeErrorDetails = true;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        IssuerSigningKey = symmetricKey,
+                        ValidAudience
+                    }
+                })
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "inz_int", Version = "v1" });
