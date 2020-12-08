@@ -1,7 +1,7 @@
 using System;
+using System.Text;
 using AutoMapper;
 using inz_int.Authentication;
-using inz_int.Authorization;
 using inz_int.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -46,18 +46,28 @@ namespace inz_int
             services.AddScoped<ValidUsersContext, ValidUsersContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => 
-                {
-                    var symmetricKey = new SymmetricSecurityKey(OpenApiEncoding.UTF8.GetBytes(configuration["Jwt:Symmetric:Key"]));
-                    
-                    options.IncludeErrorDetails = true;
-
-                    options.TokenValidationParameters = new TokenValidationParameters
+                .AddJwtBearer(options =>
                     {
-                        IssuerSigningKey = symmetricKey,
-                        ValidAudience
-                    }
-                })
+                        options.RequireHttpsMetadata = false;
+                        options.SaveToken = true;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = Configuration["Jwt:Issuer"],
+                            ValidAudience = Configuration["Jwt:Audience"],
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SecretKey"])),
+                            ClockSkew = TimeSpan.Zero
+                        };
+                    });
+
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy(Policies.Admin, Policies.AdminPolicy());
+                config.AddPolicy(Policies.User, Policies.UserPolicy());
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "inz_int", Version = "v1" });

@@ -18,5 +18,8 @@ namespace inz_int.Models
         [Required]
         [MaxLength(64)]
         public string Passwd { get; set; }
+        [Required]
+        [MaxLength(99)]
+        public string Role{ get; set; }
     }
 }

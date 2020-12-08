@@ -9,5 +9,6 @@ namespace inz_int.DTOs
         public string Site { get; set; }
         public string Login { get; set; }
         public string Passwd { get; set; }
+        public string Token { get; set; }
     }
 }

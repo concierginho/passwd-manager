@@ -1,8 +1,7 @@
 namespace inz_int.DTOs
 {
-    public class UserLoginAnswerDTO
+    public class Access
     {
         public string Token { get; set; }
-        public string Role { get; set; }
     }
 }

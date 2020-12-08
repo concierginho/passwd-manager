@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using inz_int.Data;
-using Microsoft.IdentityModel.Tokens;
+using inz_int.Models;
 
 namespace inz_int.Authentication
 {
@@ -20,31 +15,26 @@ namespace inz_int.Authentication
             _validUsersContext = validUsersContext;
         }
 
-        public string Authenticate(string login, string passwd)
+        public User Authenticate(string login, string passwd)
         {
             if(!_userRepository.GetAllUsers()
                 .Any(user => user.Login == login && user.Passwd == passwd))
                 return null;
 
-            var key = Guid.NewGuid().ToString();
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.ASCII.GetBytes(key);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var userdb = _userRepository.GetAllUsers()
+                .Where(user => user.Login == login && user.Passwd == passwd)
+                .FirstOrDefault();
+
+            var user = new User 
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, login)
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(1),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(tokenKey),
-                    SecurityAlgorithms.HmacSha256Signature)
+                Login = userdb.Login,
+                Passwd = userdb.Passwd,
+                FirstName = userdb.FirstName,
+                LastName = userdb.LastName,
+                Role = userdb.Role
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            _validUsersContext.AddValidatedUser(login, token);
-
-            return tokenHandler.WriteToken(token);
+            return user;
         }
     }
 }

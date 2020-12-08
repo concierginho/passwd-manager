@@ -15,7 +15,10 @@ namespace inz_int.Data
 
         public void CreatePasswd(Password password)
         {
-            throw new System.NotImplementedException();
+            if(password == null)
+                throw new System.ArgumentNullException(nameof(password));
+
+            _context.Add(password);
         }
 
         public IEnumerable<Password> GetAllPasswords()
@@ -23,14 +26,14 @@ namespace inz_int.Data
             return _context.Passwords.ToList();
         }
 
-        public IEnumerable<Password> GetPasswdsByUserId()
+        public Password GetPasswdsByUserId(int i)
         {
-            throw new System.NotImplementedException();
+            return _context.Passwords.FirstOrDefault(p => p.Id == i);
         }
 
         public bool SaveChanges()
         {
-            throw new System.NotImplementedException();
+            return _context.SaveChanges() >= 0;
         }
     }
 }

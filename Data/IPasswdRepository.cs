@@ -6,7 +6,7 @@ namespace inz_int
     public interface IPasswdRepository
     {
         IEnumerable<Password> GetAllPasswords();
-        IEnumerable<Password> GetPasswdsByUserId();
+        Password GetPasswdsByUserId(int i );
         void CreatePasswd(Password password);
         bool SaveChanges();
     }

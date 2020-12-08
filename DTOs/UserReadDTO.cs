@@ -6,5 +6,6 @@ namespace inz_int.DTOs
     {
         public int Id { get; set; }
         public string Login { get; set; }
+        public string Role { get; set; }
     }
 }
